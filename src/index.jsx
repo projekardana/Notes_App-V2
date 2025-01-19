@@ -1,7 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import NotesApp from './NotesApp';
+import NotesApp  from './NotesApp';
 
 import './styles/style.css';
 
@@ -11,3 +11,4 @@ root.render(
   <NotesApp />
   </BrowserRouter>
 );
+

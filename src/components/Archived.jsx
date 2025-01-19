@@ -9,3 +9,5 @@ function ArchivedButton({ id, onArchived }) {
         </button>
     )
 }
+
+export default ArchivedButton;

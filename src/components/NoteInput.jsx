@@ -1,5 +1,27 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { addNote } from "../utils/local-data";
+import { FaCheck } from "react-icons/fa";
+
+function NoteInputWrapper({ addNote, noteContent }) {
+    const handleSubmit = (event) => {
+        event.preventDefault();
+
+        if (noteContent.trim() === "") {
+            alert("Catatan Tidak Boleh kosong!");
+            return;
+        }
+        addNote({ title: noteContent, body: noteContent});
+    };
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <button type="submit">
+                <FaCheck />
+            </button>
+        </form>
+    );
+}
 
 class NoteInput extends React.Component {
     constructor(props) {
@@ -30,18 +52,11 @@ class NoteInput extends React.Component {
             };
         });
     }
-
-    onInputHandler(event) {
-        this.setState(() => {
-            return {
-                body: event.target.innerHTML,
-            }
-        });
-    }
 }
 
-NoteInput.PropTypes = {
-    addContact: PropTypes.func.isRequired,
-}
+NoteInputWrapper.propTypes = {
+    addNote: PropTypes.func.isRequired,
+    noteContent: PropTypes.string.isRequired,
+};
 
-export default NoteInput;
+export default NoteInputWrapper;
