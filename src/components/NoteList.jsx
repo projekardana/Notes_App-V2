@@ -3,32 +3,33 @@ import NoteItem from "./NoteItem";
 import { showFormattedDate } from '../utils/index';
 import PropTypes from "prop-types";
 
-function NoteList ({ notes, onDelete, onArchive, status  }) {
-    const filtered = notes.filter((note) => note.archived === status );
-
+function NoteList ({ notes, createdAt }) {
     return (
         <div className="notes-list">
-            {filtered.map(
+            {notes.map(
                 (note) => 
-                    note.archived == status && (
                         <NoteItem 
                         key={note.id}
-                        onDelete={onDelete}
-                        onArchive={onArchive}
-                        createdAt={showFormattedDate(note.createdAt)}
-                        {...note}
+                        id={note.id}
+                        title={note.title}
+                        body={note.body}
+                        createdAt={note.createdAt}
                         />
                     )
-            )}
+            }
         </div>
     );
-}
+};
 
 NoteList.propTypes = {
-    notes: PropTypes.array.isRequired,
-    onDelete: PropTypes.func.isRequired,
-    onArchive: PropTypes.func.isRequired,
-    status: PropTypes.bool.isRequired,
-}
+    notes: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            title: PropTypes.string.isRequired,
+            body: PropTypes.string.isRequired,
+            createdAt: PropTypes.string.isRequired,
+        })
+    ).isRequired,
+};
 
 export default NoteList;

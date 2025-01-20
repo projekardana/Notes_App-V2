@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { FiCheck } from "react-icons/fi";
 
 class AddNote extends React.Component {
     constructor(props) {
@@ -53,6 +54,11 @@ class AddNote extends React.Component {
                 onInput={onInputHandler}
                 dangerouslySetInnerHTML={{ __html: body }} 
             />
+            <div className="action">
+                <button className="button-action" type="button" title="Simpan">
+                    <FiCheck />
+                </button>
+            </div>
             </main>
         )
     }

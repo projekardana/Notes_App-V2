@@ -1,9 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { addNote } from "../utils/local-data";
+import AddNote from "./AddNote";
 import { FaCheck } from "react-icons/fa";
 
-function NoteInputWrapper({ addNote, noteContent }) {
+function NoteInputWrapper({ AddNote, noteContent }) {
     const handleSubmit = (event) => {
         event.preventDefault();
 
@@ -11,7 +12,7 @@ function NoteInputWrapper({ addNote, noteContent }) {
             alert("Catatan Tidak Boleh kosong!");
             return;
         }
-        addNote({ title: noteContent, body: noteContent});
+        AddNote({ title: noteContent, body: noteContent});
     };
 
     return (

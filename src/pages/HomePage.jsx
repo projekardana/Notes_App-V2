@@ -4,6 +4,8 @@ import { useSearchParams } from "react-router-dom";
 import NoteList from "../components/NoteList";
 import SearchBar from "../components/SearchBar";
 import { deleteNote, getAllNotes, getArchivedNotes } from "../utils/local-data";
+import { Link } from "react-router-dom";
+import { FiPlus } from "react-icons/fi";
 
 function HomePageWrapper() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -63,10 +65,13 @@ class HomePage extends React.Component {
         return (
             <section>
                 <SearchBar keyword={this.state.keyword} keywordChange={this.onkeywordChangeHandler} />
-            <NoteList
-            notes={this.state.notes}
-            onDelete={this.onDeleteHandler}
-            onArchive={this.onArchivedHandler} />
+                <div className="homepage__action">
+                    <Link to="/add">
+                    <button className="action" type="button" title="Tambah">
+                        <FiPlus />
+                    </button>
+                    </Link>
+                </div>
             </section>
         )
     }

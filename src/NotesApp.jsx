@@ -2,12 +2,12 @@ import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Navigation from './components/Navigation.jsx';
 import NoteList from './components/NoteList.jsx';
+import NoteItem from './components/NoteItem.jsx';
 import { getAllNotes } from './utils/local-data.js';
-import NoteInput from './components/NoteInput.jsx';
 import HomePage from './pages/HomePage.jsx';
 import AddPage from './pages/AddPage.jsx';
-import AddNote from './components/AddNote.jsx';
 import { Link } from 'react-router-dom';
+import DetailPageWrapper from './pages/DetailPage.jsx';
 
 
 class NotesApp extends React.Component {
@@ -21,6 +21,7 @@ class NotesApp extends React.Component {
 
     this.onAddNoteHandler = this.onAddNoteHandler.bind(this);
     this.onArchivedHandler = this.onArchivedHandler.bind(this);
+    this.onDeleteHandler = this.onDeleteHandler.bind(this);
     this.onSearchChangeHandler = this.onSearchChangeHandler.bind(this);
   }
 
@@ -49,6 +50,12 @@ class NotesApp extends React.Component {
     }));
   }
 
+  onDeleteHandler(id) {
+    this.setState((prevState) => ({
+      notes: prevState.notes.filter((note) => note.id !== id),
+    }));
+  }
+
   onSearchChangeHandler(event) {
     this.setState({ searchQuery: event.target.value });
   }
@@ -74,14 +81,16 @@ class NotesApp extends React.Component {
             notes={filteredActiveNotes}
             status={false}
             onArchive={this.onArchivedHandler}
+            onDelete={this.onDeleteHandler}
             />
           ) : (
             <div className="notes-list__empty">Tidak Ada Catatan.</div>
           )}
           <Routes>
             <Route path='/' element={<HomePage />} />
-            <Route path='/add' element={<AddPage onAddNoteHandler={this.onAddNoteHandler} />} />
-            <Route path='/detail/:id' element={<AddNote />} />
+            <Route path='/add' element={<AddPage />} />
+            {/* <Route path='/arsives' element={<ArcivePage />} /> */}
+            <Route path='/Detail/:id' element={<DetailPageWrapper />} />
           </Routes>
         </main>
       </div>

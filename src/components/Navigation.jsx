@@ -6,7 +6,8 @@ function Navigation({ id, title}) {
         <nav className="navigation">
             <ul>
                 <li><Link to="/"></Link></li>
-                <li><Link to="/add">Arsip</Link></li>
+                <li><Link to="/add"></Link></li>
+                <li><Link to="/arsives">Arsip</Link></li>
                 <li><Link to={`/detail/${id}`}>
                 <span style={{fontSize: "xx-large", fontWeight: "bold"}}>
                     {title}

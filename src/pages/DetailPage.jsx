@@ -1,14 +1,21 @@
 import React from "react";
-import { archiveNote, deleteNote, getAllNotes } from "../utils/local-data";
+import { useParams } from "react-router-dom";
+import { getNote } from "../utils/local-data";
 import { showFormattedDate } from "../utils";
-import { FiArchive, FiTrash } from "react-icons/fi";
+import { FiArchive, FiDelete } from "react-icons/fi";
+
+function DetailPageWrapper() {
+    const { id } = useParams();
+
+    return <DetailPage id={id} />;
+}
 
 class DetailPage extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            notes: getAllNotes(props.id),
+            note: getNote(this.props.id),
         };
 
         this.onDeleteHandler = this.onDeleteHandler.bind(this);
@@ -17,42 +24,47 @@ class DetailPage extends React.Component {
 
     onDeleteHandler(id) {
         deleteNote(id);
-        this.setState({ notes });
+        this.setState({ note: null });
     }
 
     onArchivedHandler(id) {
         archiveNote(id);
-        this.setState({ notes });
+        const updatedNote = getNote(id);
+        this.setState({ note: updatedNote });
     }
 
     render() {
+        const { note } = this.state;
+
+        if (!note) {
+            return <p>404 Catatan Tidak Ditemukan!</p>
+        }
+
+        const { title, body, createdAt, id } = note;
+
         return (
             <div className="detail-page">
-                <h3 className="detail-page__title">{title}</h3>
+                <h3 className="detail-page__title">{note.title}</h3>
                 <p className="detail-page__createdAt">{showFormattedDate(createdAt)}</p>
-                <p className="detail-page__body">{body}</p>
-            </div>
+                <p className="detail-page__body">{note.body}</p>
             <div className="detail-page__action">
-                <button
-                    className="note-item___archive-button"
-                    type="button"
-                    title="Arsipkan"
-                    onClick={this.onArchivedHandler}
-                >
+                <button className="note-item__archive-button"
+                type="button" 
+                title="Arsipkan"
+                onClick={() => this.onArchivedHandler(id)}>
                     <FiArchive />
                 </button>
-                <button
-                    className="note-item__delete-button"
-                    type="button"
-                    title="Hapus"
-                    onClick={() => this.onDeleteHandler(id)}
-                >
-                    <FiTrash />
+                <button className="note-item__delete-button"
+                type="button"
+                title="Hapus"
+                onClick={() => this.onDeleteHandler(id)}>
+                    <FiDelete />
                 </button>
             </div>
+        </div>
         );
     }
     
 }
 
-export default DetailPage;
+export default DetailPageWrapper;
