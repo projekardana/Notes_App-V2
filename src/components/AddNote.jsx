@@ -1,67 +1,52 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { FiCheck } from "react-icons/fi";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+import { FiPlus } from 'react-icons/fi'; // pastikan FiPlus sudah diimpor
 
 class AddNote extends React.Component {
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props);
 
-        // inisial state
-        this.state = {
-            title: '',
-            body: '',
-        }
+    this.state = {
+      notes: getAllNotes(),
+      searchQuery: '',
+    };
 
-        this.onTitleChangeHandler = this.onTitleChangeHandler.bind(this);
-        this.onBodyChangeHandler = this.onBodyChangeHandler.bind(this);
-        this.onSubmitChangeHandler = this.onSubmitChangeHandler.bind(this);
-    }
+    this.onAddNoteHandler = this.onAddNoteHandler.bind(this);
+  }
 
-    onTitleChangeHandler(event) {
-        this.setState(() => {
-            return {
-                title: event.target.value,
-            }
-        });
-    }
+  onAddNoteHandler({ title, body }) {
+    this.setState((prevState) => {
+      return {
+        notes: [
+          ...prevState.notes,
+          {
+            id: +new Date(),
+            title,
+            body,
+            createdAt: new Date().toISOString(),
+            archived: false,
+          },
+        ],
+      };
+    });
+  }
 
-    onBodyChangeHandler(event) {
-        this.setState(() => {
-            return {
-                body: event.target.value,
-            }
-        });
-    }
-
-    onSubmitChangeHandler(event) {
-        event.preventDefault();
-        this.props.AddNote(this.state)
-    }
-
-    render() {
-        return (
-            <main className="add-new-page__input__title">
-            <input 
-                type="text" 
-                value={title} 
-                onChange={onTitleChangeHandler} 
-                placeholder="Catatan Rahasia"
-            />
-            <div 
-                className="add-new-page__body__body"
-                placeholder="Sebenarnya saya adalah ..." 
-                contentEditable
-                onInput={onInputHandler}
-                dangerouslySetInnerHTML={{ __html: body }} 
-            />
-            <div className="action">
-                <button className="button-action" type="button" title="Simpan">
-                    <FiCheck />
-                </button>
-            </div>
-            </main>
-        )
-    }
+  render() {
+    return (
+      <div className="homepage__action">
+        <Link to="/add">
+          <button className="action" type="button" title="Tambah">
+            <FiPlus />
+          </button>
+        </Link>
+      </div>
+    );
+  }
 }
+
+AddNote.PropTypes = {
+  onAddNoteHandler: PropTypes.func.isRequired,
+};
 
 export default AddNote;

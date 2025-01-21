@@ -1,80 +1,100 @@
-import React from "react";
-import { useParams } from "react-router-dom";
-import { useSearchParams } from "react-router-dom";
-import NoteList from "../components/NoteList";
-import SearchBar from "../components/SearchBar";
-import { deleteNote, getAllNotes, getArchivedNotes } from "../utils/local-data";
-import { Link } from "react-router-dom";
-import { FiPlus } from "react-icons/fi";
-
-function HomePageWrapper() {
-    const [searchParams, setSearchParams] = useSearchParams();
-
-    const keyword = searchParams.get("search") || "";
-
-    function changeSearchParams(keyword) {
-        setSearchParams({ keyword });
-    }
-
-    return <HomePage defaultKeyword={keyword} keywordChange={changeSearchParams} />
-}
+import React from 'react';
+import NoteList from '../components/NoteList';
+import Navigation from '../components/Navigation';
+import { getAllNotes } from '../utils/local-data';
+import { Link } from 'react-router-dom';
+import { FiPlus } from 'react-icons/fi';
 
 class HomePage extends React.Component {
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props);
 
-        this.state = {
-            notes: getAllNotes(),
-            keyword: props.defaultKeyword || '',
-        }
+    this.state = {
+      notes: [],
+      searchQuery: '',
+    };
 
-        this.onkeywordChangeHandler = this.onkeywordChangeHandler.bind(this);
-    }
+    this.onAddNoteChangeHandler = this.onAddNoteChangeHandler.bind(this);
+    this.onSearchChangeHandler = this.onSearchChangeHandler.bind(this);
+    this.onArchivedHandler = this.onArchivedHandler.bind(this);
+    this.onDeleteHandler = this.onDeleteHandler.bind(this);
+  }
 
-    onDeleteHandler(id) {
-        deleteNote(id);
+  onAddNoteChangeHandler(newNote) {
+    this.setState((prevState) => ({
+      notes: [...prevState.notes, newNote],
+    }));
+  }
 
-    }
+  onSearchChangeHandler(event) {
+    this.setState({ searchQuery: event.target.value });
+  }
 
-    onArchivedHandler(id) {
-        getArchivedNotes(id);
+  onArchivedHandler(id) {
+    this.setState((prevState) => ({
+      notes: prevState.notes.map((note) =>
+        note.id === id ? { ...note, archived: !note.archived } : note
+      ),
+    }));
+  }
 
-        // update the notes state from data.js
-        this.setState(() => {
-            return {
-                notes: getAllNotes(),
-            }
-        });
-    }
+  onDeleteHandler(id) {
+    this.setState((prevState) => ({
+      notes: prevState.notes.filter((note) => note.id !== id),
+    }));
+  }
 
-    onkeywordChangeHandler(keyword) {
-        this.setState(() => {
-            return {
-                keyword,
-            }
-        });
-
-        this.props.keywordChange(keyword);
-    }
-
-    render() {
-        const notes = this.state.notes.filter((note) => {
-            return note.title && note.title.toLowerCase().includes(this.state.keyword.toLowerCase())
-        });
-
-        return (
-            <section>
-                <SearchBar keyword={this.state.keyword} keywordChange={this.onkeywordChangeHandler} />
-                <div className="homepage__action">
-                    <Link to="/add">
-                    <button className="action" type="button" title="Tambah">
-                        <FiPlus />
-                    </button>
-                    </Link>
-                </div>
-            </section>
+  render() {
+    // Filter notes berdasarkan searchQuery
+    const filteredActiveNotes = Array.isArray(this.state.notes)
+      ? this.state.notes.filter(
+          (note) =>
+            !note.archived &&
+            note.title
+              .toLowerCase()
+              .includes(this.state.searchQuery.toLowerCase())
         )
-    }
+      : [];
+
+    return (
+      <div className="app-container">
+        <header className="notes-app__header">
+          <h1>
+            <Link to={'/'}>Aplikasi Catatan</Link>
+          </h1>
+          <Navigation />
+        </header>
+        <main>
+          <div className="search-bar">
+            <h2>Catatan Aktif</h2>
+            <input
+              type="text"
+              placeholder="Cari berdasarkan judul..."
+              value={this.state.searchQuery}
+              onChange={this.onSearchChangeHandler}
+            />
+          </div>
+          {filteredActiveNotes.length > 0 ? (
+            <NoteList
+              notes={filteredActiveNotes}
+              status={false}
+              onArchive={this.onArchivedHandler}
+              onDelete={this.onDeleteHandler}
+            />
+          ) : (
+            <p>Tidak ada Catatan Aktif yang ditemukan</p>
+          )}
+        </main>
+        <div className="homepage__action">
+          <Link to="/add">
+            <button className="action" type="button" title="Tambah">
+              <FiPlus />
+            </button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 }
 
-export default HomePageWrapper;
+export default HomePage;
