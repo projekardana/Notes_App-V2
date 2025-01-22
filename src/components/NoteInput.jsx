@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { FiCheck } from 'react-icons/fi';
-import { Link } from 'react-router-dom'; // Jangan lupa import Link jika diperlukan
-import Navigation from './Navigation'; // Jika ada komponen Navigation yang digunakan
+import { Link } from 'react-router-dom';
+import Navigation from './Navigation';
 
 class NoteInput extends React.Component {
   constructor(props) {
@@ -14,35 +14,34 @@ class NoteInput extends React.Component {
       body: '',
     };
 
-    this.onTitleChangeHandler = this.onTitleChangeHandler.bind(this);
-    this.onBodyChangeHandler = this.onBodyChangeHandler.bind(this);
-    this.onSubmitChangeHandler = this.onSubmitChangeHandler.bind(this);
+    this.onTitleChangeEventHandler = this.onTitleChangeEventHandler.bind(this);
+    this.onBodyChangeEventHandler = this.onBodyChangeEventHandler.bind(this);
+    this.onSubmitEventHandler = this.onSubmitEventHandler.bind(this);
   }
 
-  onTitleChangeHandler(event) {
-    this.setState({ title: event.target.value });
-  }
-
-  onBodyChangeHandler(event) {
-    this.setState({ body: event.target.value });
-  }
-
-  onSubmitChangeHandler(event) {
-    event.preventDefault();
-
-    const { title, body } = this.state;
-
-    this.props.addNote({
-      id: Date.now(),
-      title,
-      body,
+  onTitleChangeEventHandler(event) {
+    this.setState(() => {
+      return {
+        title: event.target.value,
+      };
     });
+  }
 
-    this.setState({ title: '', body: '' });
+  onBodyChangeEventHandler(event) {
+    this.setState(() => {
+      return {
+        body: event.target.value,
+      };
+    });
+  }
+
+  onSubmitEventHandler(event) {
+    event.preventDefault();
+    this.props.addNote(this.state);
   }
 
   render() {
-    const { title, body } = this.state;
+    const { body } = this.props;
     return (
       <div className="app-container">
         <header className="notes-app__header">
@@ -57,15 +56,15 @@ class NoteInput extends React.Component {
               <input
                 className="add-new-page__input__title"
                 type="text"
-                value={title}
-                onChange={this.onTitleChangeHandler}
+                value={this.state.title}
+                onChange={this.onTitleChangeEventHandler}
                 placeholder="Catatan Rahasia"
               />
               <div
                 className="add-new-page__input__body"
                 contentEditable
                 data-placeholder="Sebenarnya saya adalah ..."
-                onInput={this.onBodyChangeHandler}
+                onInput={this.onBodyChangeEventHandler}
                 dangerouslySetInnerHTML={{ __html: body }}
               />
               <div className="add-new-page__action">
@@ -73,7 +72,7 @@ class NoteInput extends React.Component {
                   className="action"
                   type="button"
                   title="Simpan"
-                  onClick={this.onSubmitChangeHandler} // Pastikan untuk menambahkan fungsi onClick di sini
+                  onClick={this.onSubmitEventHandler}
                 >
                   <FiCheck />
                 </button>

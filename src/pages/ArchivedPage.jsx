@@ -1,46 +1,25 @@
 import React from 'react';
-import NoteList from '../components/NoteList';
 import Navigation from '../components/Navigation';
-import { getAllNotes } from '../utils/local-data';
+import NoteList from '../components/NoteList';
 import { Link } from 'react-router-dom';
-import { FiPlus } from 'react-icons/fi';
 
-class HomePage extends React.Component {
+class ArchivedPage extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      notes: getAllNotes(),
+      notes: [],
       searchQuery: '',
     };
 
-    this.onAddNoteHandler = this.onAddNoteHandler.bind(this);
     this.onSearchHandler = this.onSearchChangeHandler.bind(this);
     this.onArchivedHandler = this.onArchivedHandler.bind(this);
     this.onDeleteHandler = this.onDeleteHandler.bind(this);
   }
 
-  onAddNoteHandler({ title, body }) {
-    this.setState((prevState) => {
-      return {
-        notes: [
-          ...prevState.notes,
-          {
-            id: +new Date(),
-            title,
-            body,
-            createdAt: new Date().toISOString(),
-            archived: false,
-          },
-        ],
-      };
-    });
-  }
-
   onSearchChangeHandler(event) {
     this.setState({ searchQuery: event.target.value });
   }
-
   onArchivedHandler(id) {
     this.setState((prevState) => ({
       prevState: prevState.notes.map((note) =>
@@ -55,7 +34,7 @@ class HomePage extends React.Component {
   }
 
   render() {
-    const filteredActiveNotes = this.state.notes.filter((note) =>
+    const filteredArchiveNotes = this.state.notes.filter((note) =>
       note.title.toLowerCase().includes(this.state.searchQuery.toLowerCase())
     );
 
@@ -77,9 +56,9 @@ class HomePage extends React.Component {
               onChange={this.onSearchChangeHandler}
             />
           </div>
-          {filteredActiveNotes.length > 0 ? (
+          {filteredArchiveNotes.length > 0 ? (
             <NoteList
-              notes={filteredActiveNotes}
+              notes={filteredArchiveNotes}
               status={false}
               onArchive={this.onArchivedHandler}
               onDelete={this.onDeleteHandler}
@@ -88,16 +67,9 @@ class HomePage extends React.Component {
             <p>Tidak ada Catatan Aktif yang ditemukan</p>
           )}
         </main>
-        <div className="homepage__action">
-          <Link to="/add">
-            <button className="action" type="button" title="Tambah">
-              <FiPlus />
-            </button>
-          </Link>
-        </div>
       </div>
     );
   }
 }
 
-export default HomePage;
+export default ArchivedPage;
