@@ -1,6 +1,6 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
-import { getNote } from '../utils/local-data';
+import { useParams, useNavigate } from 'react-router-dom';
+import { getNote, deleteNote, archiveNote } from '../utils/local-data';
 import Navigation from '../components/Navigation';
 import { Link } from 'react-router-dom';
 import { showFormattedDate } from '../utils';
@@ -11,6 +11,9 @@ function DetailPageWrapper() {
   const { id } = useParams();
 
   return <DetailPage id={id} />;
+
+  const navigate = useNavigate();
+  return AppCom;
 }
 
 class DetailPage extends React.Component {
@@ -27,13 +30,14 @@ class DetailPage extends React.Component {
 
   onDeleteHandler(id) {
     deleteNote(id);
-    this.setState({ note: null });
+
+    navigate('/');
   }
 
   onArchivedHandler(id) {
     archiveNote(id);
-    const updatedNote = getNote(id);
-    this.setState({ note: updatedNote });
+
+    navigate('/');
   }
 
   render() {

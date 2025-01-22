@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 function ArchivedButton({ id, onArchived }) {
   return (
@@ -10,5 +11,10 @@ function ArchivedButton({ id, onArchived }) {
     </button>
   );
 }
+
+ArchivedButton.PropTypes = {
+  id: PropTypes.number.isRequired,
+  onArchived: PropTypes.func.isRequired,
+};
 
 export default ArchivedButton;

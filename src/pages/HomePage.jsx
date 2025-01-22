@@ -15,7 +15,7 @@ class HomePage extends React.Component {
     };
 
     this.onAddNoteHandler = this.onAddNoteHandler.bind(this);
-    this.onSearchHandler = this.onSearchChangeHandler.bind(this);
+    this.onSearchChangeHandler = this.onSearchChangeHandler.bind(this);
     this.onArchivedHandler = this.onArchivedHandler.bind(this);
     this.onDeleteHandler = this.onDeleteHandler.bind(this);
   }
@@ -42,16 +42,18 @@ class HomePage extends React.Component {
   }
 
   onArchivedHandler(id) {
-    this.setState((prevState) => ({
-      prevState: prevState.notes.map((note) =>
-        note.id === id ? (note.archived = !note.archived) : note
-      ),
-    }));
+    archiveNote(id);
+
+    // Mengarahkan ke Halaman ArchivedPage setelah mengarsipkan catatan
+    navigate('/arsives');
   }
 
   onDeleteHandler(id) {
-    const notes = this.state.notes.filter((note) => note.id !== id);
-    this.setState({ notes });
+    deleteNote(id);
+    // this.setState({ notes });
+
+    // Arahkan ke Halaman HomePage setelah menghapus catatan
+    navigate('/');
   }
 
   render() {
@@ -85,12 +87,14 @@ class HomePage extends React.Component {
               onDelete={this.onDeleteHandler}
             />
           ) : (
-            <p>Tidak ada Catatan Aktif yang ditemukan</p>
+            <div className="notes-list-empty">
+              <p>Tidak ada Catatan Aktif yang ditemukan</p>
+            </div>
           )}
         </main>
         <div className="homepage__action">
           <Link to="/add">
-            <button className="action" type="button" title="Tambah">
+            <button className="action" type="btn" title="Tambah">
               <FiPlus />
             </button>
           </Link>

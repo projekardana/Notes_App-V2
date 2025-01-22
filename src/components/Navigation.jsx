@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 function Navigation({ id, title }) {
@@ -25,5 +26,10 @@ function Navigation({ id, title }) {
     </nav>
   );
 }
+
+Navigation.propTypes = {
+  id: PropTypes.number.isRequired,
+  title: PropTypes.string.isRequired,
+};
 
 export default Navigation;

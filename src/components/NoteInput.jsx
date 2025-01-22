@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FiCheck } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import Navigation from './Navigation';
+import parser from 'html-react-parser';
 
 class NoteInput extends React.Component {
   constructor(props) {
@@ -15,7 +16,7 @@ class NoteInput extends React.Component {
     };
 
     this.onTitleChangeEventHandler = this.onTitleChangeEventHandler.bind(this);
-    this.onBodyChangeEventHandler = this.onBodyChangeEventHandler.bind(this);
+    this.onInputHandler = this.onInputHandler.bind(this);
     this.onSubmitEventHandler = this.onSubmitEventHandler.bind(this);
   }
 
@@ -27,10 +28,10 @@ class NoteInput extends React.Component {
     });
   }
 
-  onBodyChangeEventHandler(event) {
+  onInputHandler(event) {
     this.setState(() => {
       return {
-        body: event.target.value,
+        body: event.target.innerHTML,
       };
     });
   }
@@ -41,7 +42,6 @@ class NoteInput extends React.Component {
   }
 
   render() {
-    const { body } = this.props;
     return (
       <div className="app-container">
         <header className="notes-app__header">
@@ -64,13 +64,13 @@ class NoteInput extends React.Component {
                 className="add-new-page__input__body"
                 contentEditable
                 data-placeholder="Sebenarnya saya adalah ..."
-                onInput={this.onBodyChangeEventHandler}
-                dangerouslySetInnerHTML={{ __html: body }}
+                onInput={this.onInputHandler}
+                dangerouslySetInnerHTML={{ __html: parser(this.state.body) }}
               />
               <div className="add-new-page__action">
                 <button
                   className="action"
-                  type="button"
+                  type="btn"
                   title="Simpan"
                   onClick={this.onSubmitEventHandler}
                 >
