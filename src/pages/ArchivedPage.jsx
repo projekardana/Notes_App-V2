@@ -55,8 +55,10 @@ class ArchivedPage extends React.Component {
   }
 
   render() {
-    const filteredArchiveNotes = this.state.notes.filter((note) =>
-      note.title.toLowerCase().includes(this.state.keyword.toLowerCase())
+    const filteredArchiveNotes = this.state.notes.filter(
+      (note) =>
+        note.archived === true &&
+        note.title.toLowerCase().includes(this.state.keyword.toLowerCase())
     );
 
     return (
@@ -96,10 +98,10 @@ class ArchivedPage extends React.Component {
 }
 
 ArchivedPage.propTypes = {
+  id: PropTypes.string.isRequired,
+  navigate: PropTypes.func.isRequired,
   defaultKeyword: PropTypes.string.isRequired,
   keywordChange: PropTypes.func.isRequired,
-  archiveNote: PropTypes.func,
-  deleteNote: PropTypes.func,
 };
 
 export default ArchivedPageWrapper;
