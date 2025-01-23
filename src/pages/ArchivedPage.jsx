@@ -98,8 +98,6 @@ class ArchivedPage extends React.Component {
 }
 
 ArchivedPage.propTypes = {
-  id: PropTypes.string.isRequired,
-  navigate: PropTypes.func.isRequired,
   defaultKeyword: PropTypes.string.isRequired,
   keywordChange: PropTypes.func.isRequired,
 };
