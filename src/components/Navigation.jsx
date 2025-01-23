@@ -28,8 +28,8 @@ function Navigation({ id, title }) {
 }
 
 Navigation.propTypes = {
-  id: PropTypes.number.isRequired,
-  title: PropTypes.string.isRequired,
+  id: PropTypes.string,
+  title: PropTypes.string,
 };
 
 export default Navigation;

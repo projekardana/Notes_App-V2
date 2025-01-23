@@ -27,9 +27,9 @@ function NoteList({ notes, deleteNote, archiveNote, status }) {
 
 NoteList.propTypes = {
   notes: PropTypes.arrayOf(PropTypes.object).isRequired,
-  deleteNote: PropTypes.func.isRequired,
-  archiveNote: PropTypes.func.isRequired,
-  status: PropTypes.string.isRequired,
+  deleteNote: PropTypes.func,
+  archiveNote: PropTypes.func,
+  status: PropTypes.bool.isRequired,
 };
 
 export default NoteList;
