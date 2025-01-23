@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { showFormattedDate } from '../utils';
 import { IoMdArchive } from 'react-icons/io';
 import { FiTrash2 } from 'react-icons/fi';
+import PropTypes from 'prop-types';
 
 function DetailPageWrapper() {
   const { id } = useParams();
@@ -84,5 +85,10 @@ class DetailPage extends React.Component {
     );
   }
 }
+
+DetailPage.propTypes = {
+  deleteNote: PropTypes.func,
+  archiveNote: PropTypes.func,
+};
 
 export default DetailPageWrapper;

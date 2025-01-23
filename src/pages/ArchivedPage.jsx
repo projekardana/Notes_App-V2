@@ -2,9 +2,10 @@ import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Navigation from '../components/Navigation';
 import NoteList from '../components/NoteList';
-import { getAllNotes } from '../utils/local-data';
+import { archiveNote, deleteNote, getAllNotes } from '../utils/local-data';
 import { Link } from 'react-router-dom';
 import { node } from 'prop-types';
+import PropTypes from 'prop-types';
 import SearchBar from '../components/SearchBar';
 
 function ArchivedPageWrapper() {
@@ -93,5 +94,12 @@ class ArchivedPage extends React.Component {
     );
   }
 }
+
+ArchivedPage.propTypes = {
+  defaultKeyword: PropTypes.string.isRequired,
+  keywordChange: PropTypes.func.isRequired,
+  archiveNote: PropTypes.func,
+  deleteNote: PropTypes.func,
+};
 
 export default ArchivedPageWrapper;

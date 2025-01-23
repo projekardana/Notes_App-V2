@@ -6,6 +6,7 @@ import { getAllNotes } from '../utils/local-data';
 import { Link } from 'react-router-dom';
 import { FiPlus } from 'react-icons/fi';
 import SearchBar from '../components/SearchBar';
+import PropTypes from 'prop-types';
 
 function HomePageWrapper() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -32,8 +33,6 @@ class HomePage extends React.Component {
 
     this.onAddNoteHandler = this.onAddNoteHandler.bind(this);
     this.onSearchChangeHandler = this.onSearchChangeHandler.bind(this);
-    this.onArchivedHandler = this.onArchivedHandler.bind(this);
-    this.onDeleteHandler = this.onDeleteHandler.bind(this);
   }
 
   onAddNoteHandler({ title, body }) {
@@ -45,7 +44,7 @@ class HomePage extends React.Component {
             id: +new Date(),
             title,
             body,
-            createdAt: new Date().toLocaleDateString(),
+            createdAt: new Date().toISOString(),
             archived: false,
           },
         ],
@@ -61,14 +60,6 @@ class HomePage extends React.Component {
     });
 
     this.props.keywordChange(keyword);
-  }
-
-  onArchivedHandler(id) {
-    archiveNote(id);
-  }
-
-  onDeleteHandler(id) {
-    deleteNote(id);
   }
 
   render() {
@@ -118,5 +109,10 @@ class HomePage extends React.Component {
     );
   }
 }
+
+HomePage.propTypes = {
+  defaultKeyword: PropTypes.string.isRequired,
+  keywordChange: PropTypes.func.isRequired,
+};
 
 export default HomePageWrapper;
