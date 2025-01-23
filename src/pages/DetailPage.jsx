@@ -9,11 +9,9 @@ import { FiTrash2 } from 'react-icons/fi';
 
 function DetailPageWrapper() {
   const { id } = useParams();
-
-  return <DetailPage id={id} />;
-
   const navigate = useNavigate();
-  return AppCom;
+
+  return <DetailPage id={id} navigate={navigate} />;
 }
 
 class DetailPage extends React.Component {
@@ -21,7 +19,7 @@ class DetailPage extends React.Component {
     super(props);
 
     this.state = {
-      note: getNote(this.props.id),
+      note: getNote(props.id),
     };
 
     this.onDeleteHandler = this.onDeleteHandler.bind(this);
@@ -31,13 +29,13 @@ class DetailPage extends React.Component {
   onDeleteHandler(id) {
     deleteNote(id);
 
-    navigate('/');
+    this.props.navigate('/');
   }
 
   onArchivedHandler(id) {
     archiveNote(id);
 
-    navigate('/');
+    this.props.navigate('/');
   }
 
   render() {

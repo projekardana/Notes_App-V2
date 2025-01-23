@@ -14,7 +14,7 @@ function NoteItem({ title, createdAt, body, id }) {
   );
 }
 
-NoteItem.PropTypes = {
+NoteItem.propTypes = {
   id: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   body: PropTypes.string.isRequired,

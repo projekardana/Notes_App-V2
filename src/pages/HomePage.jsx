@@ -1,9 +1,25 @@
 import React from 'react';
+import { useSearchParams } from 'react-router-dom';
 import NoteList from '../components/NoteList';
 import Navigation from '../components/Navigation';
 import { getAllNotes } from '../utils/local-data';
 import { Link } from 'react-router-dom';
 import { FiPlus } from 'react-icons/fi';
+import SearchBar from '../components/SearchBar';
+
+function HomePageWrapper() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const keyword = searchParams.get('keyword');
+
+  function changeSearchParams(keyword) {
+    setSearchParams({ keyword });
+  }
+
+  return (
+    <HomePage defaultKeyword={keyword} keywordChange={changeSearchParams} />
+  );
+}
 
 class HomePage extends React.Component {
   constructor(props) {
@@ -11,7 +27,7 @@ class HomePage extends React.Component {
 
     this.state = {
       notes: getAllNotes(),
-      searchQuery: '',
+      keyword: props.defaultKeyword || '',
     };
 
     this.onAddNoteHandler = this.onAddNoteHandler.bind(this);
@@ -29,7 +45,7 @@ class HomePage extends React.Component {
             id: +new Date(),
             title,
             body,
-            createdAt: new Date().toISOString(),
+            createdAt: new Date().toLocaleDateString(),
             archived: false,
           },
         ],
@@ -37,28 +53,27 @@ class HomePage extends React.Component {
     });
   }
 
-  onSearchChangeHandler(event) {
-    this.setState({ searchQuery: event.target.value });
+  onSearchChangeHandler(keyword) {
+    this.setState(() => {
+      return {
+        keyword,
+      };
+    });
+
+    this.props.keywordChange(keyword);
   }
 
   onArchivedHandler(id) {
     archiveNote(id);
-
-    // Mengarahkan ke Halaman ArchivedPage setelah mengarsipkan catatan
-    navigate('/arsives');
   }
 
   onDeleteHandler(id) {
     deleteNote(id);
-    // this.setState({ notes });
-
-    // Arahkan ke Halaman HomePage setelah menghapus catatan
-    navigate('/');
   }
 
   render() {
     const filteredActiveNotes = this.state.notes.filter((note) =>
-      note.title.toLowerCase().includes(this.state.searchQuery.toLowerCase())
+      note.title.toLowerCase().includes(this.state.keyword.toLowerCase())
     );
 
     return (
@@ -72,11 +87,11 @@ class HomePage extends React.Component {
         <main>
           <div className="search-bar">
             <h2>Catatan Aktif</h2>
-            <input
+            <SearchBar
               type="text"
               placeholder="Cari berdasarkan judul..."
-              value={this.state.searchQuery}
-              onChange={this.onSearchChangeHandler}
+              keyword={this.state.keyword}
+              keywordChange={this.onSearchChangeHandler}
             />
           </div>
           {filteredActiveNotes.length > 0 ? (
@@ -104,4 +119,4 @@ class HomePage extends React.Component {
   }
 }
 
-export default HomePage;
+export default HomePageWrapper;

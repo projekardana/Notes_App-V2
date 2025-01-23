@@ -1,17 +1,33 @@
 import React from 'react';
+import { useSearchParams } from 'react-router-dom';
 import Navigation from '../components/Navigation';
 import NoteList from '../components/NoteList';
 import { getAllNotes } from '../utils/local-data';
 import { Link } from 'react-router-dom';
 import { node } from 'prop-types';
+import SearchBar from '../components/SearchBar';
+
+function ArchivedPageWrapper() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const keyword = searchParams.get('keyword');
+
+  function changeSearchParams(keyword) {
+    setSearchParams({ keyword });
+  }
+
+  return (
+    <ArchivedPage defaultKeyword={keyword} keywordChange={changeSearchParams} />
+  );
+}
 
 class ArchivedPage extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      notes: getAllNotes().filter((note) => note.archived === true),
-      searchQuery: '',
+      notes: getAllNotes(),
+      keyword: props.defaultKeyword || '',
     };
 
     this.onSearchChangeHandler = this.onSearchChangeHandler.bind(this);
@@ -19,28 +35,27 @@ class ArchivedPage extends React.Component {
     this.onDeleteHandler = this.onDeleteHandler.bind(this);
   }
 
-  onSearchChangeHandler(event) {
-    this.setState({ searchQuery: event.target.value });
+  onSearchChangeHandler(keyword) {
+    this.setState(() => {
+      return {
+        keyword,
+      };
+    });
+
+    this.props.keywordChange(keyword);
   }
 
   onArchivedHandler(id) {
-    archiveNote(id);
-
-    // Arahkan ke Halaman ArchivedPage setelah mengarsipkan catatan
-    navigate('/arsives');
+    archiveNote(props.id);
   }
 
   onDeleteHandler(id) {
-    deleteNote(id);
-    // Arahkan ke Halaman HomePage setelah menghapus catatan
-    navigate('/');
+    deleteNote(props.id);
   }
 
   render() {
-    const { searchQuery, notes } = this.state;
-
-    const filteredArchiveNotes = notes.filter((note) =>
-      note.title.toLowerCase().includes(searchQuery.toLowerCase())
+    const filteredArchiveNotes = this.state.notes.filter((note) =>
+      note.title.toLowerCase().includes(this.state.keyword.toLowerCase())
     );
 
     return (
@@ -54,11 +69,11 @@ class ArchivedPage extends React.Component {
         <main>
           <div className="search-bar">
             <h2>Catatan Arsip</h2>
-            <input
+            <SearchBar
               type="text"
               placeholder="Cari berdasarkan judul..."
-              value={searchQuery}
-              onChange={this.onSearchChangeHandler}
+              keyword={this.state.keyword}
+              keywordChange={this.onSearchChangeHandler}
             />
           </div>
           {filteredArchiveNotes.length > 0 ? (
@@ -79,4 +94,4 @@ class ArchivedPage extends React.Component {
   }
 }
 
-export default ArchivedPage;
+export default ArchivedPageWrapper;

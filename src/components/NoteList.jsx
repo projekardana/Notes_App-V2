@@ -2,8 +2,9 @@ import React from 'react';
 import NoteItem from './NoteItem';
 import { showFormattedDate } from '../utils/index';
 import PropTypes from 'prop-types';
+import { deleteNote, archiveNote } from '../utils/local-data';
 
-function NoteList({ notes, onDelete, onArchived, status }) {
+function NoteList({ notes, deleteNote, archiveNote, status }) {
   const filtered = notes.filter((note) => note.archived === status);
 
   return (
@@ -13,8 +14,8 @@ function NoteList({ notes, onDelete, onArchived, status }) {
           note.archived === status && (
             <NoteItem
               key={note.id}
-              onDelete={onDelete}
-              onArchived={onArchived}
+              deleteNote={deleteNote}
+              archiveNote={archiveNote}
               createdAt={showFormattedDate(note.createdAt)}
               {...note}
             />
@@ -24,10 +25,10 @@ function NoteList({ notes, onDelete, onArchived, status }) {
   );
 }
 
-NoteList.PropTypes = {
-  notes: PropTypes.string.isRequired,
-  onDelete: PropTypes.func.isRequired,
-  onArchived: PropTypes.func.isRequired,
+NoteList.propTypes = {
+  notes: PropTypes.arrayOf(PropTypes.object).isRequired,
+  deleteNote: PropTypes.func.isRequired,
+  archiveNote: PropTypes.func.isRequired,
   status: PropTypes.string.isRequired,
 };
 

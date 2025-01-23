@@ -275,6 +275,31 @@ main {
   color: var(--on-background);
 }
 
+.note-found-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+}
+
+.note-found-page h1 {
+  font-size: 50px;
+  color: var(--warning);
+}
+
+.note-found-page p {
+  font-size: 20px;
+  color: #03dac6;
+}
+
+.note-found-page a {
+  text-decoration: none;
+  color: #3700b3;
+  font-weight: bold;
+}
+
 @media screen and (min-width: 650px) {
   .notes-list {
     grid-template-columns: repeat(2, 1fr);

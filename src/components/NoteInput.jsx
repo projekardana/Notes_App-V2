@@ -65,7 +65,6 @@ class NoteInput extends React.Component {
                 contentEditable
                 data-placeholder="Sebenarnya saya adalah ..."
                 onInput={this.onInputHandler}
-                dangerouslySetInnerHTML={{ __html: parser(this.state.body) }}
               />
               <div className="add-new-page__action">
                 <button
