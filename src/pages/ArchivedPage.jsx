@@ -2,16 +2,21 @@ import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Navigation from '../components/Navigation';
 import NoteList from '../components/NoteList';
-import { archiveNote, deleteNote, getAllNotes } from '../utils/local-data';
+import {
+  archiveNote,
+  deleteNote,
+  getArchivedNotes,
+  unarchiveNote,
+} from '../utils/api';
 import { Link } from 'react-router-dom';
-import { node } from 'prop-types';
 import PropTypes from 'prop-types';
 import SearchBar from '../components/SearchBar';
+import { LocaleConsumer } from '../context/LocaleContext';
 
 function ArchivedPageWrapper() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const keyword = searchParams.get('keyword');
+  const keyword = searchParams.get('keyword') || '';
 
   function changeSearchParams(keyword) {
     setSearchParams({ keyword });
@@ -27,13 +32,21 @@ class ArchivedPage extends React.Component {
     super(props);
 
     this.state = {
-      notes: getAllNotes(),
+      notes: [],
       keyword: props.defaultKeyword || '',
+      initializing: true,
     };
 
     this.onSearchChangeHandler = this.onSearchChangeHandler.bind(this);
     this.onArchivedHandler = this.onArchivedHandler.bind(this);
     this.onDeleteHandler = this.onDeleteHandler.bind(this);
+  }
+
+  async componentDidMount() {
+    const { error, data } = await getArchivedNotes();
+    if (!error) {
+      this.setState({ notes: data, initializing: false });
+    }
   }
 
   onSearchChangeHandler(keyword) {
@@ -46,15 +59,39 @@ class ArchivedPage extends React.Component {
     this.props.keywordChange(keyword);
   }
 
-  onArchivedHandler(id) {
-    archiveNote(props.id);
+  async onUnarchivedHandler(id) {
+    await unarchiveNote(id);
+
+    const { data } = await getArchivedNotes();
+    this.setState({ notes: data });
   }
 
-  onDeleteHandler(id) {
-    deleteNote(props.id);
+  async onArchivedHandler(id) {
+    await archiveNote(id);
+
+    const { error, data } = await getArchivedNotes();
+    if (!error) {
+      this.setState({ notes: data });
+    }
+  }
+
+  async onDeleteHandler(id) {
+    await deleteNote(id);
+
+    const { error, data } = await getArchivedNotes();
+    if (!error) {
+      this.setState({ notes: data });
+    }
   }
 
   render() {
+    if (this.state.initializing) {
+      return (
+        <div className="app-container">
+          <p>Memuat Catatan... </p>
+        </div>
+      );
+    }
     const filteredArchiveNotes = this.state.notes.filter(
       (note) =>
         note.archived === true &&
@@ -62,37 +99,41 @@ class ArchivedPage extends React.Component {
     );
 
     return (
-      <div className="app-container">
-        <header className="notes-app__header">
-          <h1>
-            <Link to={'/'}>Aplikasi Catatan</Link>
-          </h1>
-          <Navigation />
-        </header>
-        <main>
-          <div className="search-bar">
-            <h2>Catatan Arsip</h2>
-            <SearchBar
-              type="text"
-              placeholder="Cari berdasarkan judul..."
-              keyword={this.state.keyword}
-              keywordChange={this.onSearchChangeHandler}
-            />
-          </div>
-          {filteredArchiveNotes.length > 0 ? (
-            <NoteList
-              notes={filteredArchiveNotes}
-              status={true}
-              onArchive={this.onArchivedHandler}
-              onDelete={this.onDeleteHandler}
-            />
-          ) : (
-            <div className="notes-list-empty">
-              <p>Tidak ada Catatan yang ditemukan</p>
+      <LocaleConsumer>
+        {({ locale }) => {
+          return (
+            <div className="app-container">
+              <main>
+                <div className="search-bar">
+                  <h2>{locale === 'id' ? 'Catatan Arsip' : 'Arsive Note'}</h2>
+                  <SearchBar
+                    type="text"
+                    placeholder="Cari berdasarkan judul..."
+                    keyword={this.state.keyword}
+                    keywordChange={this.onSearchChangeHandler}
+                  />
+                </div>
+                {filteredArchiveNotes.length > 0 ? (
+                  <NoteList
+                    notes={filteredArchiveNotes}
+                    status={true}
+                    onArchive={this.onArchivedHandler}
+                    onDelete={this.onDeleteHandler}
+                  />
+                ) : (
+                  <div className="notes-list-empty">
+                    <p>
+                      {locale === 'id'
+                        ? 'Tidak ada Catatan yang ditemukan'
+                        : 'No Other Notes'}
+                    </p>
+                  </div>
+                )}
+              </main>
             </div>
-          )}
-        </main>
-      </div>
+          );
+        }}
+      </LocaleConsumer>
     );
   }
 }

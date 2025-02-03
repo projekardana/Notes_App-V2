@@ -44,12 +44,6 @@ class NoteInput extends React.Component {
   render() {
     return (
       <div className="app-container">
-        <header className="notes-app__header">
-          <h1>
-            <Link to="/">Aplikasi Catatan</Link>
-          </h1>
-          <Navigation />
-        </header>
         <main>
           <section className="add-new-page">
             <div className="add-new-page__input">

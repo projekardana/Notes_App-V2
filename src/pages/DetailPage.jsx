@@ -1,13 +1,19 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getNote, deleteNote, archiveNote } from '../utils/local-data';
-import Navigation from '../components/Navigation';
-import { Link } from 'react-router-dom';
+import {
+  getActiveNotes,
+  deleteNote,
+  archiveNote,
+  unarchiveNote,
+  getNote,
+} from '../utils/api.js';
 import { showFormattedDate } from '../utils';
 import { IoMdArchive } from 'react-icons/io';
+import { MdUnarchive } from 'react-icons/md';
 import { FiTrash2 } from 'react-icons/fi';
 import PropTypes from 'prop-types';
 
+// Komponen Wrapper untuk menggunakan useParams dan useNavigate
 function DetailPageWrapper() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -20,42 +26,52 @@ class DetailPage extends React.Component {
     super(props);
 
     this.state = {
-      note: getNote(props.id),
+      note: null,
     };
 
     this.onDeleteHandler = this.onDeleteHandler.bind(this);
     this.onArchivedHandler = this.onArchivedHandler.bind(this);
+    this.onUnarchivedHandler = this.onUnarchivedHandler.bind(this);
   }
 
-  onDeleteHandler(id) {
-    deleteNote(id);
+  async componentDidMount() {
+    const { id } = this.props;
+    const { error, data } = await getNote(id);
 
-    this.props.navigate('/');
+    if (!error) {
+      this.setState({ note: data });
+    } else {
+      console.error('Error fetching note:', error);
+      this.setState({ note: null });
+    }
   }
 
-  onArchivedHandler(id) {
-    archiveNote(id);
+  async onDeleteHandler(id) {
+    await deleteNote(id);
+    this.props.navigate('/'); // Navigasi kembali ke halaman utama
+  }
 
-    this.props.navigate('/');
+  async onArchivedHandler(id) {
+    await archiveNote(id);
+    this.props.navigate('/'); // Navigasi kembali ke halaman utama
+  }
+
+  async onUnarchivedHandler(id) {
+    await unarchiveNote(id);
+    this.props.navigate('/'); // Navigasi kembali ke halaman utama
   }
 
   render() {
     const { note } = this.state;
 
     if (!note) {
-      return <p>404 Catatan Tidak Ditemukan!</p>;
+      return <p>Catatan Tidak Ditemukan!</p>;
     }
 
-    const { title, body, createdAt, id } = note;
+    const { title, body, createdAt, id, archived } = note;
 
     return (
       <div className="app-container">
-        <header className="notes-app__header">
-          <h1>
-            <Link to={'/'}>Aplikasi Catatan</Link>
-          </h1>
-          <Navigation />
-        </header>
         <div className="detail-page">
           <h3 className="detail-page__title">{title}</h3>
           <p className="detail-page__createdAt">
@@ -63,14 +79,25 @@ class DetailPage extends React.Component {
           </p>
           <p className="detail-page__body">{body}</p>
           <div className="detail-page__action">
-            <button
-              className="action"
-              type="button"
-              title="Arsipkan"
-              onClick={() => this.onArchivedHandler(id)}
-            >
-              <IoMdArchive />
-            </button>
+            {archived ? (
+              <button
+                className="action"
+                type="button"
+                title="Unarchive"
+                onClick={() => this.onUnarchivedHandler(id)}
+              >
+                <MdUnarchive />
+              </button>
+            ) : (
+              <button
+                className="action"
+                type="button"
+                title="Archive"
+                onClick={() => this.onArchivedHandler(id)}
+              >
+                <IoMdArchive />
+              </button>
+            )}
             <button
               className="action"
               type="button"

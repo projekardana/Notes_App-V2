@@ -2,7 +2,7 @@ import React from 'react';
 import NoteItem from './NoteItem';
 import { showFormattedDate } from '../utils/index';
 import PropTypes from 'prop-types';
-import { deleteNote, archiveNote } from '../utils/local-data';
+import { deleteNote, archiveNote } from '../utils/api';
 
 function NoteList({ notes, deleteNote, archiveNote, status }) {
   const filtered = notes.filter((note) => note.archived === status);
